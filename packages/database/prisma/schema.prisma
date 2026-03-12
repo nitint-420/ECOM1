@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String?       @unique
+  phone        String        @unique
+  password     String
+  name         String
+  role         String        @default("CUSTOMER")
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  addresses    Address[]
+  orders       Order[]
+  cart         Cart?
+  khataAccount KhataAccount?
+
+  @@map("users")
+}
+
+model Address {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  landmark     String?
+  area         String
+  city         String   @default("Local")
+  pincode      String
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  orders       Order[]
+
+  @@map("addresses")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  image     String?
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  description   String?
+  sku           String      @unique
+  barcode       String?     @unique
+  categoryId    String
+  category      Category    @relation(fields: [categoryId], references: [id])
+  costPrice     Float       @default(0)
+  mrp           Float
+  sellingPrice  Float
+  stock         Float       @default(0)
+  unit          String      @default("PCS")
+  minQty        Float       @default(1)
+  stepQty       Float       @default(1)
+  lowStockAlert Float       @default(10)
+  image         String?
+  isActive      Boolean     @default(true)
+  isFeatured    Boolean     @default(false)
+  isAvailable   Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  stockLogs     StockLog[]
+
+  @@index([barcode])
+  @@index([categoryId])
+  @@map("products")
+}
+
+model StockLog {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  type          String
+  quantity      Float
+  previousStock Float
+  newStock      Float
+  reference     String?
+  note          String?
+  createdBy     String?
+  createdAt     DateTime @default(now())
+
+  @@map("stock_logs")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String?    @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id])
+  customerName    String
+  customerPhone   String
+  addressId       String?
+  address         Address?      @relation(fields: [addressId], references: [id])
+  deliveryAddress String?
+  orderType       String        @default("POS")
+  subtotal        Float
+  discountAmount  Float         @default(0)
+  deliveryCharge  Float         @default(0)
+  totalAmount     Float
+  paymentMethod   String        @default("CASH")
+  paymentStatus   String        @default("PENDING")
+  khataAccountId  String?
+  khataAccount    KhataAccount? @relation(fields: [khataAccountId], references: [id])
+  status          String        @default("PENDING")
+  deliverySlot    String?
+  deliveryNote    String?
+  deliveredAt     DateTime?
+  whatsappSent    Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  items           OrderItem[]
+  payments        Payment[]
+
+  @@index([orderNumber])
+  @@index([customerPhone])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  productName String
+  productUnit String
+  quantity    Float
+  unitPrice   Float
+  totalAmount Float
+
+  @@map("order_items")
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  orderId        String?
+  order          Order?        @relation(fields: [orderId], references: [id])
+  khataAccountId String?
+  khataAccount   KhataAccount? @relation(fields: [khataAccountId], references: [id])
+  amount         Float
+  method         String
+  reference      String?
+  note           String?
+  createdAt      DateTime      @default(now())
+
+  @@map("payments")
+}
+
+model KhataAccount {
+  id             String             @id @default(cuid())
+  userId         String?            @unique
+  user           User?              @relation(fields: [userId], references: [id])
+  name           String
+  phone          String             @unique
+  address        String?
+  creditLimit    Float              @default(5000)
+  currentBalance Float              @default(0)
+  isActive       Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  orders         Order[]
+  payments       Payment[]
+  transactions   KhataTransaction[]
+
+  @@index([phone])
+  @@map("khata_accounts")
+}
+
+model KhataTransaction {
+  id             String       @id @default(cuid())
+  khataAccountId String
+  khataAccount   KhataAccount @relation(fields: [khataAccountId], references: [id])
+  type           String
+  amount         Float
+  balanceAfter   Float
+  description    String
+  reference      String?
+  createdAt      DateTime     @default(now())
+
+  @@map("khata_transactions")
+}
+
+model DeliveryArea {
+  id             String  @id @default(cuid())
+  name           String
+  pincode        String?
+  minOrder       Float   @default(0)
+  deliveryCharge Float   @default(0)
+  freeAbove      Float?
+  isActive       Boolean @default(true)
+
+  @@map("delivery_areas")
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@map("settings")
+}
+
+model DayBook {
+  id          String   @id @default(cuid())
+  date        DateTime @default(now())
+  type        String
+  category    String
+  description String
+  amount      Float
+  paymentMode String?
+  reference   String?
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+  @@map("daybook")
+}
