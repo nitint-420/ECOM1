@@ -6,8 +6,8 @@ export default async function DaybookPage() {
   const today = new Date(); today.setHours(0,0,0,0);
   const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
   const entries = await prisma.dayBook.findMany({ where: { date: { gte: today, lt: tomorrow } }, orderBy: { createdAt: "desc" } });
-  const income = entries.filter(e => e.type === "INCOME").reduce((s,e) => s+e.amount, 0);
-  const expense = entries.filter(e => e.type === "EXPENSE").reduce((s,e) => s+e.amount, 0);
+  const income = entries.filter((e: any) => e.type === "INCOME").reduce((s,e) => s+e.amount, 0);
+  const expense = entries.filter((e: any) => e.type === "EXPENSE").reduce((s,e) => s+e.amount, 0);
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Daybook - Today</h1>
