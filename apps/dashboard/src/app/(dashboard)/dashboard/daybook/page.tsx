@@ -1,14 +1,15 @@
-import { prisma } from "@ecom/database";
+﻿import { prisma } from "@ecom/database";
 import { formatCurrency } from "@ecom/utils";
 import { Card, CardContent } from "@ecom/ui";
+
+type Entry = Awaited<ReturnType<typeof prisma.dayBook.findMany>>[number];
 
 export default async function DaybookPage() {
   const today = new Date(); today.setHours(0,0,0,0);
   const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
   const entries = await prisma.dayBook.findMany({ where: { date: { gte: today, lt: tomorrow } }, orderBy: { createdAt: "desc" } });
-  type Entry = Awaited<ReturnType<typeof prisma.dayBook.findMany>>[number];
-const income = entries.filter((e: Entry) => e.type === "INCOME").reduce((s, e: Entry) => s + e.amount, 0);
-const expense = entries.filter((e: Entry) => e.type === "EXPENSE").reduce((s, e: Entry) => s + e.amount, 0);
+  const income = entries.filter((e: Entry) => e.type === "INCOME").reduce((s: number, e: Entry) => s + e.amount, 0);
+  const expense = entries.filter((e: Entry) => e.type === "EXPENSE").reduce((s: number, e: Entry) => s + e.amount, 0);
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Daybook - Today</h1>
@@ -19,7 +20,7 @@ const expense = entries.filter((e: Entry) => e.type === "EXPENSE").reduce((s, e:
       </div>
       <Card><CardContent className="p-4">
         {entries.length === 0 ? <p className="text-center text-gray-500 py-12">No entries today</p> : (
-          <div className="space-y-3">{entries.map(e => (
+          <div className="space-y-3">{entries.map((e: Entry) => (
             <div key={e.id} className={"flex items-center gap-3 p-3 rounded-lg " + (e.type === "INCOME" ? "bg-green-50" : "bg-red-50")}>
               <div className="flex-1"><p className="font-medium">{e.description}</p><p className="text-xs text-gray-500">{e.category}</p></div>
               <span className={"font-bold " + (e.type === "INCOME" ? "text-green-600" : "text-red-600")}>{e.type === "INCOME" ? "+" : "-"}{formatCurrency(e.amount)}</span>
