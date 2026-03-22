@@ -1,8 +1,9 @@
 import { prisma } from "@ecom/database";
 import { formatCurrency, formatDateTime } from "@ecom/utils";
 import { Card, CardContent, Badge } from "@ecom/ui";
+import type { Prisma } from "@ecom/database";  
 
-type Order = Awaited<ReturnType<typeof prisma.order.findMany<{ include: { items: true } }>>>[number];
+type Order = Prisma.OrderGetPayload<{ include: { items: true } }>;
 
 export default async function OrdersPage() {
   const orders = await prisma.order.findMany({ take: 50, orderBy: { createdAt: "desc" }, include: { items: true } });
