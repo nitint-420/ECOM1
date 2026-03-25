@@ -5,9 +5,8 @@
   "scripts": {
   "dev": "next dev -p 3000",
   "build": "next build",
-  "start": "next start -p 3000",
-  "postinstall": "prisma generate --schema=../../packages/database/prisma/schema.prisma"
-  },
+  "start": "next start -p 3000"
+    },
   "dependencies": {
     "@ecom/database": "workspace:*",
     "@ecom/ui": "workspace:*",
