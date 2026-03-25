@@ -1,3 +1,5 @@
 {
-  "buildCommand": "pnpm dlx prisma generate --schema=packages/database/prisma/schema.prisma && turbo run build"
+  "buildCommand": "pnpm --filter @ecom/database db:generate && turbo run build",
+  "installCommand": "pnpm install"
+
 }
