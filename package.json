@@ -1,14 +1,11 @@
-{
-  "name": "grocery-ecom",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "db:generate": "pnpm --filter @ecom/database db:generate",
-    "db:push": "pnpm --filter @ecom/database db:push",
-    "db:seed": "pnpm --filter @ecom/database seed"
-  },
+"scripts": {
+  "dev": "turbo run dev",
+  "build": "turbo run build",
+  "postinstall": "pnpm --filter @ecom/database db:generate",
+  "db:generate": "pnpm --filter @ecom/database db:generate",
+  "db:push": "pnpm --filter @ecom/database db:push",
+  "db:seed": "pnpm --filter @ecom/database seed"
+},
   "devDependencies": {
     "@types/node": "^20.11.0",
     "turbo": "^2.0.0",

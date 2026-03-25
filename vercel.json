@@ -1,0 +1,3 @@
+{
+  "buildCommand": "pnpm dlx prisma generate --schema=packages/database/prisma/schema.prisma && turbo run build"
+}
