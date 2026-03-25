@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "cd ../.. && pnpm --filter @ecom/database prisma generate && cd apps/dashboard && next build",
-    "start": "next start -p 3000"
+  "dev": "next dev -p 3000",
+  "build": "next build",
+  "start": "next start -p 3000",
+  "postinstall": "prisma generate --schema=../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@ecom/database": "workspace:*",
