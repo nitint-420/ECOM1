@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "postinstall": "pnpm --filter @ecom/database db:generate",
+    "postinstall": "cd packages/database && npx prisma generate",
     "db:generate": "pnpm --filter @ecom/database db:generate",
     "db:push": "pnpm --filter @ecom/database db:push",
     "db:seed": "pnpm --filter @ecom/database seed"
