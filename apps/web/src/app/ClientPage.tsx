@@ -316,7 +316,8 @@ export default function HomePage({ categories, products, s }: {
         <p className="font-bold text-lg">{s.store_name || "My Grocery Store"}</p>
         <p className="text-gray-400 mt-1">{s.store_address}</p>
         <p className="text-gray-400">Phone: {s.store_phone}</p>
-        <p className="text-gray-500 mt-4 text-sm">2024 All rights reserved</p>
+        <p className="text-gray-500 mt-4 text-sm">2026 All rights reserved</p>
+        <p className="text-red-500 mt-4 text-sm">RAMKRUSHNA COMPUTER SERVICE</p>
         <p className="text-white-500 mt-4 text-sm">Software Develop By Mr. Nitin Thakare Mo. No. 9975162329</p>
       </footer>
     </div>

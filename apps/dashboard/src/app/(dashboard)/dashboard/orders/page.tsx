@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { prisma } from "@ecom/database";
 import { formatCurrency, formatDateTime } from "@ecom/utils";
 import { Card, CardContent, Badge } from "@ecom/ui";

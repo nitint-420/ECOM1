@@ -1,4 +1,5 @@
-﻿import { prisma } from "@ecom/database";
+export const dynamic = 'force-dynamic';
+import { prisma } from "@ecom/database";
 import { formatCurrency } from "@ecom/utils";
 import { Card, CardContent } from "@ecom/ui";
 
@@ -31,3 +32,4 @@ export default async function DaybookPage() {
     </div>
   );
 }
+
